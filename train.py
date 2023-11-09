@@ -8,86 +8,48 @@ from keras.layers import Dense
 from keras.models import Sequential
 import matplotlib.pyplot as plt
 import math
-"""
-x = np.arange(0, math.pi*2, .1)
-y = (np.sin(x)+1)/2 
+import tensorflow
 
-model = Sequential([
-    Dense(10, input_shape=(1,)),
-    Activation('sigmoid'),
-    Dense(1)
-])
-
-model.compile(loss='mean_squared_error', optimizer='SGD', metrics=['mean_squared_error'])
-model.fit(x, y, epochs=100000, batch_size=8, verbose=0)
-
-preds = model.predict(x)
-
-plt.plot(x, y, 'b', x, preds, 'r--')
-plt.ylabel('Y / Predicted Value')
-plt.xlabel('X Value')
-plt.show()
-
-x = np.arange(0, 100, .1)
-y = (np.sin(x)+1)/2 
-
-model_copy = model
-model_copy.fit(x, y, epochs=10000, batch_size=8, verbose=0)
-model_copy_preds = model_copy.predict(x)
-
-plt.plot(x, y, 'b', x, model_copy_preds, 'r--')
-plt.ylabel('Y / Predicted Value')
-plt.xlabel('X Value')
-plt.show()
-print(model.layers[0].get_weights()[0])
-print(model.layers[0].get_weights()[1])
-print(model.layers[1].get_weights()[0])
-print(model.layers[1].get_weights()[1])
-"""
-
-x = np.arange(-3*np.pi, 3*np.pi, 0.01).reshape(-1,1)
+x = np.arange(-5*np.pi, 5*np.pi, 0.001).reshape(-1,1)
 y = np.cos(x)
-
+#,kernel_initializer=tensorflow.keras.initializers.RandomNormal(mean=0, stddev=100.0, seed=None)
 model = Sequential()
-#model.add(Dense(1))
-#model.add(Dense(16, activation='tanh'))
-#model.add(Dense(16, activation='tanh'))
-#model.add(Dense(1))
-#model.compile(optimizer='adam', loss='mse')
 model = Sequential()
-model.add(Dense(16, activation='tanh',input_shape=(1,)))
-model.add(Dense(16, activation='tanh'))
-model.add(Dense(1))
+model.add(Dense(16, activation='tanh',input_shape=(1,),kernel_initializer=tensorflow.keras.initializers.RandomUniform(minval=-5., maxval=5.)))
+model.add(Dense(16, activation='tanh',kernel_initializer=tensorflow.keras.initializers.RandomUniform(minval=-5., maxval=5.)))
+model.add(Dense(16, activation='tanh',kernel_initializer=tensorflow.keras.initializers.RandomUniform(minval=-5., maxval=5.)))
+model.add(Dense(1,kernel_initializer=tensorflow.keras.initializers.RandomUniform(minval=-5., maxval=5.)))
 model.compile(loss='mean_squared_error', optimizer='SGD', metrics=['mean_squared_error'])
 
-for i in range(10):
-    model.fit(x, y, epochs=80, batch_size=10, verbose=1)
+for i in range(60):
+    model.fit(x, y, epochs=100, batch_size=100, verbose=1)
     predictions = model.predict(x)
 
-model.compile(loss='mse', optimizer='adam')
-
 preds = model.predict(x)
 plt.plot(x, y, 'b', x, preds, 'r--')
 plt.ylabel('Y / Predicted Value')
 plt.xlabel('X Value')
-#plt.show()
-"""
-print(model.layers[0].get_weights()[1])
-print(model.layers[1].get_weights()[1])
-print(model.layers[2].get_weights()[1])
-print(model.layers[3].get_weights()[1])
-#print(model.layers[0].get_weights()[1])
-#print(model.layers[1].get_weights()[1])
-"""
+plt.show()
+
 def weights_to_cpp(model, filename="weights_and_biases.txt"):
-    model.summary()
+    #model.summary()
     weights = []
     biases = []
     for l in range(len(model.layers)):
-        W, B = model.layers[l].get_weights()
+        if l==0:
+           continue
+        W=[]
+        B=[]
+        for c in model.layers[l].get_weights():
+          if (len(W)==0):
+            W=c
+          elif (len(B)==0):
+            B=c
+          else:
+            break
+        #W, B = model.layers[l].get_weights()
         weights.append(W.flatten())
         biases.append(B.flatten())
-    print(weights)
     z = []
     b = []
     for i in weights:

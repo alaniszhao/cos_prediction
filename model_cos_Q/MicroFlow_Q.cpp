@@ -29,7 +29,7 @@
 //   // return result;
 // }
 
-MicroMLP::MicroMLP(int la, int* top, double* w, double* b, int* a){
+MicroMLP::MicroMLP(int la, int* top, int* w, int* b, int* a){
   layers = la;
   topology = top;
   weights = w;
@@ -37,7 +37,7 @@ MicroMLP::MicroMLP(int la, int* top, double* w, double* b, int* a){
   activations = a;
 }
 
-MicroMLP::MicroMLP(int la, int* top, double* w, double* b, int a){
+MicroMLP::MicroMLP(int la, int* top, int* w, int* b, int a){
   layers = la;
   topology = top;
   weights = w;
@@ -89,7 +89,7 @@ void MicroMLP::feedforward(double* input, double* out){
       double sum = 0;
       
       for (int j = 0; j < topology[l]; j++) {
-        sum += cpy[j] * weights[bi+weightAdder];
+        sum += cpy[j] * (((float)weights[bi+weightAdder])/100);
         bi += topology[l+1];
       }
       x[i] = sum;
@@ -98,7 +98,7 @@ void MicroMLP::feedforward(double* input, double* out){
     //matrix_multiply(topology[l], topology[l+1], topology[l], x, weightStack, x, topology[l+1]);
     
     for (int i=0;i<topology[l+1];i++){
-      x[i] += biases[i+biasAdder];
+      x[i] += ((float)biases[i+biasAdder])/100;
     }
     if (l != layers-2){
       if (!allSameActiv)

@@ -16,15 +16,15 @@ void activate(int l, double* z, int activation);
 
 class MicroMLP{
   public:
-    int* weights;
-    int* biases;
+    double* weights;
+    double* biases;
     int layers;
     int* topology;
     int* activations;
     int sameActiv;
     bool allSameActiv = false;
-    MicroMLP(int la, int* top, int* w, int* b, int* a);
-    MicroMLP(int la, int* top, int* w, int* b, int a);
+    MicroMLP(int la, int* top, double* w, double* b, int* a);
+    MicroMLP(int la, int* top, double* w, double* b, int a);
     //bool matrix_multiply(int R, int R2, int C2, double* a, double* b, double* result, int size);
     void feedforward(double* input, double* out);
 
